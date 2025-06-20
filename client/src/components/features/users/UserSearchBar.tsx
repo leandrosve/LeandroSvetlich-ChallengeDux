@@ -13,7 +13,7 @@ import { buildUserFilterUrl } from "@/utils/filters";
 export default function UserSearchBar({ filters }: { filters: UserFilters }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") ?? "");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") ?? "");
 
   const ref = useRef<HTMLInputElement>(null);
   const [debouncedSearchTerm, setDebouncedTerm] = useDebounce(searchTerm, 500);

@@ -28,3 +28,39 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+.p-button,
+.p-button-icon-only {
+  align-items: center !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  vertical-align: middle;
+}
+
+.p-button-icon-only .p-button-label {
+  display: none;
+}
+
+.p-sortable-column-icon {
+  vertical-align: middle;
+}
+
+.p-datatable-table {
+  border-spacing: 0;
+}
+
+.p-tag {
+  display: inline-flex;
+}
+
+.p-tag-value {
+  display: none;
+}
+
+.dialog-header-primary .p-dialog-header-icon{
+  color: white;
+}
+
+.dialog-header-primary .p-dialog-header-icon:hover{
+  background: rgba(161, 194, 255, 0.589);
+}

@@ -3,6 +3,7 @@ import User, { UserFilters } from "@/models/User";
 import Logger from "@/utils/Logger";
 import { Column } from "primereact/column";
 import { DataTable, DataTableStateEvent } from "primereact/datatable";
+import { Skeleton } from "primereact/skeleton";
 import { Tag } from "primereact/tag";
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
 }
 
 const statusBodyTemplate = (user: User) => {
-  return <Tag value={user.estado} severity={getSeverity(user.estado)}></Tag>;
+  return <Tag severity={getSeverity(user.estado)}>{user.estado}</Tag>;
 };
 
 const getSeverity = (status: string) => {
@@ -27,6 +28,7 @@ const getSeverity = (status: string) => {
       return "secondary";
   }
 };
+
 function UserTable({ users, onSort, filter }: Props) {
   const handleSort = (e: DataTableStateEvent) => {
     onSort(e.sortField as keyof User, e.sortOrder == 1 ? "asc" : "desc");
@@ -35,6 +37,7 @@ function UserTable({ users, onSort, filter }: Props) {
     <DataTable
       className="min-w-full"
       value={users}
+      size="small"
       onRowSelect={(r) => Logger.info(r.data)}
       selectionMode="single"
       emptyMessage="No se han encontrado resultados"
@@ -61,5 +64,18 @@ function UserTable({ users, onSort, filter }: Props) {
     </DataTable>
   );
 }
+
+export const UserTableSkeleton = () => (
+  <div className="gap-2 flex flex-column align-items-stretch w-full flex-grow-1 pb-2">
+    <Skeleton width="full" height="4rem" />
+    <Skeleton width="full" height="25rem" />
+    <div className="flex-grow-1"></div>
+    <Skeleton
+      width="40rem"
+      height="3rem"
+      className="max-w-full align-self-center"
+    />
+  </div>
+);
 
 export default UserTable;

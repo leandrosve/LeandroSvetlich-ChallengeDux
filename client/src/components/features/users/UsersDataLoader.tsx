@@ -10,7 +10,7 @@ interface Props {
     searchTerm?: string;
   };
 }
-async function UserListRetriever({ filters }: Props) {
+async function UsersDataLoader({ filters }: Props) {
   const { hasError, data } = await UserService.list(filters);
 
   if (hasError) return <Alert  title="Lo sentimos, se ha producido un error" description="No pudimos obtener los usuarios" severity="error"/>;
@@ -23,4 +23,4 @@ async function UserListRetriever({ filters }: Props) {
   );
 }
 
-export default UserListRetriever;
+export default UsersDataLoader;
