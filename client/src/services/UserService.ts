@@ -1,4 +1,5 @@
 import User, { UserFilters } from "@/models/User";
+import Logger from "@/utils/Logger";
 
 type APISuccessfulResponse<T> = {
   data: T;
@@ -76,5 +77,58 @@ export default class UserService {
       hasError: false,
       data: { available: !data.users.find((u) => u.id == id), id: id },
     };
+  }
+
+  public static async getById(id: string): Promise<APIResponse<User>> {
+    const res = await this.list({ id, page: 1, pageSize: 1 });
+
+    if (res.hasError) return { hasError: true, error: "api_error" };
+
+    const data = res.data;
+
+    const user = data.users.find((u) => u.id == id);
+
+    if (!user) {
+      return {
+        hasError: true,
+        error: "user_not_found",
+      };
+    }
+    return {
+      hasError: false,
+      data: user,
+    };
+  }
+
+  public static async create(user: User): Promise<APIResponse<User>> {
+    const url = `${this.BASE_URL}${this.PATH}?sector=4000`;
+
+    try {
+      const res = await await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.status != 201) {
+        return {
+          hasError: true,
+          error: "api_error",
+        };
+      }
+
+      const createdUserId: { id: string } = await res.json();
+      Logger.info("Se creo el usuario - ID: " + createdUserId.id);
+      return {
+        hasError: false,
+        data: user,
+      };
+    } catch {
+      return {
+        hasError: true,
+        error: "unknown_error",
+      };
+    }
   }
 }

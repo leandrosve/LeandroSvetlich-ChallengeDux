@@ -7,7 +7,7 @@ import { ROUTES } from "@/constants/routes";
 import { buildUserFilterUrl } from "@/utils/filters";
 import dynamic from "next/dynamic";
 import { UserListProvider, useUserList } from "@/context/UserListContext";
-import UserCreateModal from "./create/UserCreateModal";
+import UserFormModal from "./create/UserFormModal";
 
 const ClientPaginator = dynamic(
   () => import("@/components/common/ClientPaginator"),
@@ -20,11 +20,10 @@ interface Props {
     pageSize: number;
     searchTerm?: string;
   };
-  users: User[];
-  totalCount: number;
 }
 
-function UserListComponent({ filters, users, totalCount }: Props) {
+function UserListComponent({ filters }: Props) {
+  const data = useUserList();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -51,15 +50,15 @@ function UserListComponent({ filters, users, totalCount }: Props) {
 
   return (
     <div className="flex-grow-1 flex flex-column">
-      <UserTable users={users} onSort={onSort} filter={filters} />
+      <UserTable users={data.data.users} onSort={onSort} filter={filters} />
       <ClientPaginator
         pageSize={filters.pageSize}
-        totalCount={totalCount}
+        totalCount={data.data.total}
         page={filters.page}
         rowsPerPageOptions={[10, 20, 30]}
         onPageChange={onPageChange}
       />
-      <UserCreateModal/>
+      <UserFormModal />
     </div>
   );
 }

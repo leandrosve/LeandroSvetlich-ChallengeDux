@@ -5,7 +5,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 
 interface UserListData {
   users: User[];
-  totalCount: number;
+  total: number;
 }
 
 interface UserListContextProps {
@@ -18,7 +18,7 @@ interface UserListProviderProps {
   initialData?: UserListData;
 }
 
-const defaultData: UserListData = { users: [], totalCount: 0 };
+const defaultData: UserListData = { users: [], total: 0 };
 
 const UserListContext = createContext<UserListContextProps | undefined>(undefined);
 

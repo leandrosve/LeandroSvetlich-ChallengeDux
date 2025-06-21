@@ -29,9 +29,20 @@ a {
   text-decoration: none;
 }
 
-.box-size-3{
+.box-size-3 {
   height: 1.5rem;
   width: 1.5rem;
+}
+
+.custom-spinner {
+  display: flex !important;
+  height: 4rem !important;
+  width: 4rem !important;
+}
+.custom-spinner .p-progress-spinner-circle {
+  stroke: currentColor !important;
+  opacity: 0.5;
+  animation: p-progress-spinner-dash 1.5s ease-in-out infinite;
 }
 
 .p-button,
@@ -62,10 +73,10 @@ a {
   display: none;
 }
 
-.dialog-header-primary .p-dialog-header-icon{
+.dialog-header-primary .p-dialog-header-icon {
   color: white;
 }
 
-.dialog-header-primary .p-dialog-header-icon:hover{
+.dialog-header-primary .p-dialog-header-icon:hover {
   background: rgba(161, 194, 255, 0.589);
 }

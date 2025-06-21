@@ -5,18 +5,28 @@ import { useEffect, useState } from "react";
 // Hago esto para reutilizar la validacion del id
 const idSchema = userFormSchema.shape.id;
 
-const useValidateUserId = (id: string | undefined | null) => {
+const useValidateUserId = (id: string | undefined | null, initialUserId?: string | undefined | null) => {
   const [idAvailable, setIdAvailable] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+
+    if (initialUserId && id == initialUserId) {
+        setLoading(false);
+        setIdAvailable(true);
+        return
+    };
+
     // Limpio estado anterior
     setIdAvailable(null);
 
     // Si el ID no pasa la validacion, no hago fetch
-    if (!id || !idSchema.safeParse(id).success) return;
 
+    if (!id || !idSchema.safeParse(id).success) return;
+    setLoading(true);
     const timer = setTimeout(async () => {
       const res = await UserService.isUserIdAvailable(id);
+      setLoading(false);
       if (res.hasError) return;
 
       if (res.data?.available) {
@@ -27,9 +37,9 @@ const useValidateUserId = (id: string | undefined | null) => {
     }, 1500);
 
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [id, initialUserId]);
 
-  return idAvailable;
+  return {idAvailable, loading};
 };
 
 export default useValidateUserId;

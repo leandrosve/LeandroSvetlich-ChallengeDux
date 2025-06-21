@@ -1,7 +1,7 @@
-import { Message } from "primereact/message";
+import { Message, MessageProps } from "primereact/message";
 import React from "react";
 
-interface Props {
+interface Props extends MessageProps {
   title?: string;
   description?: string;
   severity?: "success" | "info" | "error";
@@ -19,15 +19,15 @@ const getBorderColor = (severity?: Props["severity"]) => {
   }
 };
 
-const Alert = (props: Props) => {
+const Alert = ({ title, description, className, ...props }: Props) => {
   return (
     <Message
       style={{
         borderLeft: `6px solid ${getBorderColor(props.severity)}`,
       }}
-      className=" w-full justify-content-start"
+      className={` w-full justify-content-start ${className}`}
       severity={props.severity}
-      content={<AlertContent {...props} />}
+      content={<AlertContent title={title} description={description} />}
     />
   );
 };

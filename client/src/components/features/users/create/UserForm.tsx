@@ -11,53 +11,81 @@ import { useDebounce } from "@/hooks/useDebounce";
 import UserService from "@/services/UserService";
 import { boolean } from "zod/v4-mini";
 import useValidateUserId from "@/hooks/useValidateUserId";
+import User from "@/models/User";
+import Alert from "@/components/common/Alert";
 
 const statuses = [
   {
     name: "Activo",
-    value: "ACTIVE",
+    value: "ACTIVO",
   },
   {
     name: "Inactivo",
-    value: "INACTIVE",
+    value: "INACTIVO",
   },
 ];
 
-const sector = { name: "4000", value: "4000" };
+const sector = { name: "4000", value: 4000 };
 
-type UserFormData = z.infer<typeof userFormSchema>;
+interface Props {
+  onCancel: () => void;
+  mode: "create" | "edit" | null;
+  user?: User | null;
+  onSuccess: () => void;
+}
 
-const UserForm = ({ onCancel }: { onCancel: () => void }) => {
+const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isSubmitting, dirtyFields },
-  } = useForm<UserFormData>({
+    formState: { errors, isSubmitting, dirtyFields, isValid },
+  } = useForm<User>({
     resolver: zodResolver(userFormSchema),
     mode: "all",
-    defaultValues: {
+    defaultValues: user ?? {
       id: "",
       usuario: "",
       estado: "",
-      sector: sector,
+      sector: 4000,
     },
   });
 
   const id = watch("id");
 
-  const idAvailable = useValidateUserId(id);
+  const [error, setError] = useState("");
 
-  const onSubmit = (data: UserFormData) => {
-    console.log("DATA", data);
-  };
+  const { idAvailable, loading: validatingUserId } = useValidateUserId(id, user?.id);
+
+  const onSubmit = useCallback(
+    async (data: User) => {
+      console.log("DATA", data);
+      setError("");
+
+      let res;
+      if (mode == "create") {
+        res = await UserService.create(data);
+      }
+
+      // Actualizar
+      if (res?.hasError) {
+        setError("Se ha producido un error");
+        return;
+      }
+
+      onSuccess();
+    },
+    [mode]
+  );
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-column mt-4 gap-2"
     >
+      {user?.estado}
+      {error && <Alert title={error} />}
       <TextField
         id="id"
         label="ID"
@@ -66,6 +94,7 @@ const UserForm = ({ onCancel }: { onCancel: () => void }) => {
         helperText="El ID debe ser númerico"
         keyfilter="num"
         showCheck={!errors.id && dirtyFields.id && idAvailable == true}
+        loading={validatingUserId}
         {...register("id")}
         errorMessage={
           idAvailable == false
@@ -87,7 +116,9 @@ const UserForm = ({ onCancel }: { onCancel: () => void }) => {
           optionLabel="name"
           placeholder="Seleccionar el estado"
           value={watch("estado")}
-          onChange={(e) => setValue("estado", e.value)}
+          onChange={(e) =>
+            setValue("estado", e.value, { shouldValidate: true })
+          }
           className="w-full"
         />
       </Field>
@@ -98,7 +129,7 @@ const UserForm = ({ onCancel }: { onCancel: () => void }) => {
           disabled
           optionLabel="name"
           placeholder="Selecciona un sector"
-          value="4000"
+          value={watch("sector")}
         />
       </Field>
 
@@ -106,10 +137,17 @@ const UserForm = ({ onCancel }: { onCancel: () => void }) => {
         <Button
           label="Cancelar"
           severity="secondary"
-          type="reset"
-          onClick={onCancel}
+          onClick={(e) => {
+            e.preventDefault();
+            onCancel();
+          }}
         />
-        <Button label="Confirmar" type="submit" />
+        <Button
+          label="Confirmar"
+          type="submit"
+          loading={isSubmitting}
+          disabled={!isValid || !idAvailable}
+        />
       </div>
     </form>
   );

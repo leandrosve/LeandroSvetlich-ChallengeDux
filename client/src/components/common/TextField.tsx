@@ -15,6 +15,7 @@ interface Props extends InputTextProps {
   helperText?: string;
   showCheck?: boolean;
   loading?: boolean;
+  required?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -70,7 +71,7 @@ const TextField = forwardRef<HTMLInputElement, Props>(
           )}
         </div>
 
-        {!errorMessage  && helperText && (
+        {!errorMessage && helperText && (
           <span id={`${id}-help`} className="text-xs text-600">
             <i className="pi pi-info-circle text-xs"></i> {helperText}
           </span>

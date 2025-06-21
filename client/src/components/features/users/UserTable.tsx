@@ -1,10 +1,16 @@
 "use client";
 import User, { UserFilters } from "@/models/User";
 import Logger from "@/utils/Logger";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Column } from "primereact/column";
-import { DataTable, DataTableStateEvent } from "primereact/datatable";
+import {
+  DataTable,
+  DataTableSelectEvent,
+  DataTableStateEvent,
+} from "primereact/datatable";
 import { Skeleton } from "primereact/skeleton";
 import { Tag } from "primereact/tag";
+import { useCallback } from "react";
 
 interface Props {
   users: User[];
@@ -30,15 +36,25 @@ const getSeverity = (status: string) => {
 };
 
 function UserTable({ users, onSort, filter }: Props) {
-  const handleSort = (e: DataTableStateEvent) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleSort = useCallback((e: DataTableStateEvent) => {
     onSort(e.sortField as keyof User, e.sortOrder == 1 ? "asc" : "desc");
-  };
+  }, []);
+
+  const onRowSelect = useCallback((e: DataTableSelectEvent) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("modal", "edit");
+    params.set("user", e.data.id);
+    window.history.replaceState(null, "", `?${params.toString()}`);
+  }, []);
   return (
     <DataTable
       className="min-w-full"
       value={users}
       size="small"
-      onRowSelect={(r) => Logger.info(r.data)}
+      onRowSelect={onRowSelect}
       selectionMode="single"
       emptyMessage="No se han encontrado resultados"
       onSort={handleSort}

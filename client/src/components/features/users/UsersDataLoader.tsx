@@ -2,6 +2,7 @@ import UserService from "@/services/UserService";
 import React from "react";
 import UserListComponent from "./UserListComponent";
 import Alert from "@/components/common/Alert";
+import { UserListProvider } from "@/context/UserListContext";
 
 interface Props {
   filters: {
@@ -13,13 +14,18 @@ interface Props {
 async function UsersDataLoader({ filters }: Props) {
   const { hasError, data } = await UserService.list(filters);
 
-  if (hasError) return <Alert  title="Lo sentimos, se ha producido un error" description="No pudimos obtener los usuarios" severity="error"/>;
+  if (hasError)
+    return (
+      <Alert
+        title="Lo sentimos, se ha producido un error"
+        description="No pudimos obtener los usuarios"
+        severity="error"
+      />
+    );
   return (
-    <UserListComponent
-      users={data.users}
-      filters={filters}
-      totalCount={data.total}
-    />
+    <UserListProvider initialData={data}>
+      <UserListComponent filters={filters} />
+    </UserListProvider>
   );
 }
 
