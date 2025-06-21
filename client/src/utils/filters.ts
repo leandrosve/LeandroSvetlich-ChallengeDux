@@ -2,7 +2,7 @@ import { ROUTES } from "@/constants/routes";
 import User, { UserFilters } from "@/models/User";
 
 export function buildUserFilterUrl(filters: UserFilters): string {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
   if (filters.searchTerm) params.set("search", filters.searchTerm);
   else params.delete("search");
   if (filters.page) params.set("page", filters.page.toString());

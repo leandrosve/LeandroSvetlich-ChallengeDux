@@ -13,102 +13,10 @@ type APIErrorResponse<T> = {
 
 export type APIResponse<T> = APIErrorResponse<T> | APISuccessfulResponse<T>;
 
-interface UserSearchRequest {
-  searchTerm?: string;
-  page: number;
-  pageSize: number;
-  sortBy?: "usuario" | "id" | "sector" | "estado";
-  order?: "ASC" | "DESC";
-}
-
-const mock = [
-  {
-    id: "933931",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "STAR OVER SRL",
-  },
-  {
-    id: "933932",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "ADMINGSC",
-  },
-  {
-    id: "933933",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "AS",
-  },
-  {
-    id: "933934",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "OLIVETI",
-  },
-  {
-    id: "933935",
-    estado: "INACTIVO",
-    sector: 4000,
-    usuario: "GOMEZ",
-  },
-  {
-    id: "933936",
-    estado: "INACTIVO",
-    sector: 4000,
-    usuario: "REINA",
-  },
-  {
-    id: "933937",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "ADMINCHELA",
-  },
-  {
-    id: "933938",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "CENTURION",
-  },
-  {
-    id: "933939",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "CUERVA",
-  },
-  {
-    id: "933940",
-    estado: "ACTIVO",
-    sector: 4000,
-    usuario: "DIAZ",
-  },
-];
-
 export default class UserService {
   private static readonly BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
   private static readonly PATH = "/personal";
 
-  private static sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-  public static async listMock(
-    req: UserSearchRequest
-  ): Promise<APIResponse<{ users: User[]; total: number }>> {
-    await this.sleep(2000);
-    return {
-      hasError: false,
-      data: {
-        total: 100,
-        users: req.searchTerm
-          ? mock.filter((u) =>
-              u.usuario
-                .toLowerCase()
-                .includes(req.searchTerm?.toLowerCase() ?? "")
-            )
-          : mock,
-      },
-    };
-  }
   public static async list(
     filters: UserFilters
   ): Promise<APIResponse<{ users: User[]; total: number }>> {
@@ -127,6 +35,9 @@ export default class UserService {
       params.set("usuario_like", filters.searchTerm);
     }
 
+    if (filters.id) {
+      params.set("id", filters.id);
+    }
     const url = `${this.BASE_URL}${this.PATH}?${params.toString()}`;
     console.log(url);
     try {
@@ -151,5 +62,19 @@ export default class UserService {
         error: "unknown_error",
       };
     }
+  }
+
+  public static async isUserIdAvailable(
+    id: string
+  ): Promise<APIResponse<{ id: string; available: boolean }>> {
+    const res = await this.list({ id, page: 1, pageSize: 1 });
+    if (res.hasError) return { hasError: true, error: "api_error" };
+
+    const data = res.data;
+
+    return {
+      hasError: false,
+      data: { available: !data.users.find((u) => u.id == id), id: id },
+    };
   }
 }

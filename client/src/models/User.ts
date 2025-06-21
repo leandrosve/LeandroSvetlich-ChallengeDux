@@ -11,4 +11,5 @@ export interface UserFilters {
   searchTerm?: string;
   sort?: keyof User;
   order?: "asc" | "desc";
+  id?: string;
 }

@@ -29,6 +29,11 @@ a {
   text-decoration: none;
 }
 
+.box-size-3{
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
 .p-button,
 .p-button-icon-only {
   align-items: center !important;

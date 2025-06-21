@@ -10,6 +10,7 @@ import 'primeflex/themes/primeone-light.css';
 
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
+import { PrimeReactProvider } from "primereact/api";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,6 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <PrimeReactProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex flex-column h-full`}
@@ -48,5 +50,6 @@ export default function RootLayout({
         </div>
       </body>
     </html>
+    </PrimeReactProvider>
   );
 }
