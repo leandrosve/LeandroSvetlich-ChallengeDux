@@ -10,7 +10,6 @@ export const userFormSchema = z.object({
     .min(3, "El ID debe tener al menos 3 caracteres")
     .max(10, "El ID no puede tener más de 10 caracteres")
     .regex(/^\d+$/, "El ID debe ser numérico"),
-
   usuario: z
     .string()
     .nonempty("El nombre es obligatorio")

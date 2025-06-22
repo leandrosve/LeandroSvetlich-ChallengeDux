@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { buildUserFilterUrl } from "@/utils/filters";
 import { useUserList } from "@/context/UserListContext";
-import UserFormModal from "./create/UserFormModal";
+import UserFormModal from "../create/UserFormModal";
 import { Paginator } from "primereact/paginator";
 
 interface Props {

@@ -14,6 +14,8 @@ export default function UserSearchBar({ filters }: { filters: UserFilters }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") ?? "");
+  const [initialRender, setInitialRender] = useState(true);
+
 
   const ref = useRef<HTMLInputElement>(null);
   const [debouncedSearchTerm, setDebouncedTerm] = useDebounce(searchTerm, 500);
@@ -33,6 +35,10 @@ export default function UserSearchBar({ filters }: { filters: UserFilters }) {
   }, [ref]);
 
   useEffect(() => {
+    if (initialRender) {
+      setInitialRender(false)
+      return
+    };
     updateURL(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 

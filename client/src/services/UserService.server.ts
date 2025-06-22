@@ -1,4 +1,5 @@
-import User, { UserFilters } from "@/models/User";
+import { CACHE_TAGS } from "@/constants/cache-tags";
+import User, { UserCreateRequest, UserFilters } from "@/models/User";
 import Logger from "@/utils/Logger";
 
 type APISuccessfulResponse<T> = {
@@ -22,7 +23,8 @@ export default class UserService {
     method: string,
     path: string,
     params?: string,
-    body?: any
+    body?: any,
+    next?: NextFetchRequestConfig
   ): Promise<[APIResponse<T>, Headers | null]> {
     const headers: HeadersInit = new Headers();
     headers.set("Content-Type", "application/json");
@@ -31,13 +33,14 @@ export default class UserService {
       params ? "?" + params : ""
     }`;
 
-    Logger.info(url);
+    Logger.info(url, next);
 
     try {
       const res = await fetch(url, {
         method: method,
         headers: headers,
-        body: body ? JSON.stringify(body) : null,
+        ...(body ? { body: JSON.stringify(body) } : {}),
+        next: next,
       });
 
       if (!res.ok) {
@@ -61,14 +64,12 @@ export default class UserService {
         res.headers,
       ];
     } catch (err) {
-      console.log(err);
       return [{ hasError: true, error: "unknown_error" }, null];
     }
   }
 
-  public static async list(
-    filters: UserFilters
-  ): Promise<APIResponse<{ users: User[]; total: number }>> {
+
+  private static buildFilterParams(filters: UserFilters) {
     const params = new URLSearchParams({
       sector: "4000",
       _page: filters.page.toString(),
@@ -87,61 +88,34 @@ export default class UserService {
     if (filters.id) {
       params.set("id", filters.id);
     }
+    return params;
+  }
 
-    const [res, headers] = await this.doFetch<User[]>(
-      "GET",
-      "",
-      params.toString()
+  public static async list(
+    filters: UserFilters
+  ): Promise<APIResponse<{ users: User[]; total: number }>> {
+    const params = this.buildFilterParams(filters);
+    const res = await fetch(
+      `https://staging.duxsoftware.com.ar/api-test/personal?${params.toString()}`,
+      {
+        method: "GET",
+        next: { tags: [CACHE_TAGS.users] },
+      }
     );
 
-    if (res.hasError) {
+    if (!res.ok) {
       return {
         hasError: true,
-        error: res.error,
+        error: "api_error",
       };
     }
 
-    const users: User[] = res.data;
-    const total = Number(headers?.get("X-Total-Count") ?? 0);
+    const users: User[] = await res.json();
+    const total = Number(res.headers?.get("X-Total-Count") ?? 0);
 
     return {
       hasError: false,
       data: { users: users, total },
-    };
-  }
-
-  public static async isUserIdAvailable(
-    id: string
-  ): Promise<APIResponse<{ id: string; available: boolean }>> {
-    const res = await this.list({ id, page: 1, pageSize: 1 });
-    if (res.hasError) return { hasError: true, error: "api_error" };
-
-    const data = res.data;
-
-    return {
-      hasError: false,
-      data: { available: !data.users.find((u) => u.id == id), id: id },
-    };
-  }
-
-  public static async getById(id: string): Promise<APIResponse<User>> {
-    const res = await this.list({ id, page: 1, pageSize: 1 });
-
-    if (res.hasError) return { hasError: true, error: "api_error" };
-
-    const data = res.data;
-
-    const user = data.users.find((u) => u.id == id);
-
-    if (!user) {
-      return {
-        hasError: true,
-        error: "user_not_found",
-      };
-    }
-    return {
-      hasError: false,
-      data: user,
     };
   }
 
@@ -159,11 +133,14 @@ export default class UserService {
     Logger.info("Se creo el usuario - ID: " + createdUserId);
     return {
       hasError: false,
-      data: user,
+      data: { ...user, id: createdUserId },
     };
   }
 
-  public static async update(id: string, user: User): Promise<APIResponse<User>> {
+  public static async update(
+    id: string,
+    user: User
+  ): Promise<APIResponse<User>> {
     const [res] = await this.doFetch<User>(
       "PATCH",
       `/${id}`,

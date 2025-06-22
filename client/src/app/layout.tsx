@@ -2,14 +2,16 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 import "./globals.css";
-import "primereact/resources/themes/lara-light-blue/theme.css"
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
-import 'primeflex/themes/primeone-light.css';
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primeicons/primeicons.css";
+import "primeflex/primeflex.css";
+import "primeflex/themes/primeone-light.css";
 
-import Header from "@/components/layout/header";
-import Sidebar from "@/components/layout/sidebar";
 import { PrimeReactProvider } from "primereact/api";
+import Header from "@/components/layout/Header";
+import Sidebar from "@/components/layout/Sidebar";
+import { ToastProvider } from "@/context/ToastContext";
+import ToastNotification from "@/components/layout/ToastNotification";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,18 +39,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <PrimeReactProvider >
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} flex flex-column h-full`}
-      >
-        <Header />
-        <div className="flex align-self-stretch align-items-stretch flex-1">
-          <Sidebar />
-          <main className="flex-1">{children}</main>
-        </div>
-      </body>
-    </html>
+    <PrimeReactProvider>
+      <ToastProvider>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} flex flex-column`}
+          >
+            <Header />
+            <div className="flex align-self-stretch align-items-stretch flex-1 overflow-hidden">
+              <Sidebar />
+              <main className="flex-1 overflow-auto">{children}</main>
+            </div>
+            <ToastNotification />
+          </body>
+        </html>
+      </ToastProvider>
     </PrimeReactProvider>
   );
 }

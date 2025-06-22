@@ -25,17 +25,16 @@ export function parseUserFiltersFromParams(
 ): UserFilters {
   const page = parseInt(params.page as string) || 1;
   const pageSize = parseInt(params.size as string) || 10;
-
   const searchTerm =
     typeof params.search === "string" ? params.search : undefined;
 
   const sort =
-    typeof params.sort === "string" ? (params.sort as keyof User) : undefined;
+    typeof params.sort === "string" ? (params.sort as keyof User) : 'id';
 
   const order =
     params.order === "asc" || params.order === "desc"
       ? (params.order as "asc" | "desc")
-      : undefined;
+      : "desc";
 
   return {
     page,

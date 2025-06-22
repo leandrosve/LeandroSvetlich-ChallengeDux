@@ -1,7 +1,5 @@
 "use client";
 import User, { UserFilters } from "@/models/User";
-import Logger from "@/utils/Logger";
-import { useSearchParams, useRouter } from "next/navigation";
 import { Column } from "primereact/column";
 import {
   DataTable,

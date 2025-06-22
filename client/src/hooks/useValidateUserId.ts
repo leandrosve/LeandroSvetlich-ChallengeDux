@@ -1,21 +1,26 @@
-import UserService from "@/services/UserService";
+import UserService from "@/services/UserService.server";
+import { isUserIdAvailable } from "@/services/UserService.client";
 import { userFormSchema } from "@/validation/userFormSchema";
 import { useEffect, useState } from "react";
 
 // Hago esto para reutilizar la validacion del id
 const idSchema = userFormSchema.shape.id;
 
-const useValidateUserId = (id: string | undefined | null, initialUserId?: string | undefined | null) => {
+const useValidateUserId = (
+  id: string | undefined | null,
+  initialUserId?: string | undefined | null
+) => {
   const [idAvailable, setIdAvailable] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+   
+    setLoading(false);
 
-    if (initialUserId && id == initialUserId) {
-        setLoading(false);
-        setIdAvailable(true);
-        return
-    };
+    if (!id || initialUserId && id == initialUserId) {
+      setIdAvailable(true);
+      return;
+    }
 
     // Limpio estado anterior
     setIdAvailable(null);
@@ -25,7 +30,7 @@ const useValidateUserId = (id: string | undefined | null, initialUserId?: string
     if (!id || !idSchema.safeParse(id).success) return;
     setLoading(true);
     const timer = setTimeout(async () => {
-      const res = await UserService.isUserIdAvailable(id);
+      const res = await isUserIdAvailable(id);
       setLoading(false);
       if (res.hasError) return;
 
@@ -39,7 +44,7 @@ const useValidateUserId = (id: string | undefined | null, initialUserId?: string
     return () => clearTimeout(timer);
   }, [id, initialUserId]);
 
-  return {idAvailable, loading};
+  return { idAvailable, loading };
 };
 
 export default useValidateUserId;

@@ -19,24 +19,53 @@ const getBorderColor = (severity?: Props["severity"]) => {
   }
 };
 
-const Alert = ({ title, description, className, ...props }: Props) => {
+const getIcon = (severity?: Props["severity"]) => {
+  switch (severity) {
+    case "success":
+      return "pi pi-check-circle";
+    case "info":
+      return "pi pi-info-circle";
+    case "error":
+      return "pi pi-exclamation-triangle";
+    default:
+      return "";
+  }
+};
+
+const Alert = ({
+  title,
+  description,
+  className,
+  severity,
+  ...props
+}: Props) => {
   return (
     <Message
       style={{
-        borderLeft: `6px solid ${getBorderColor(props.severity)}`,
+        borderLeft: `6px solid ${getBorderColor(severity)}`,
       }}
       className={` w-full justify-content-start ${className}`}
-      severity={props.severity}
-      content={<AlertContent title={title} description={description} />}
+      severity={severity}
+      content={
+        <AlertContent
+          title={title}
+          description={description}
+          severity={severity}
+        />
+      }
     />
   );
 };
 
-const AlertContent = ({ title, description }: Props) => {
+const AlertContent = ({ title, description, severity }: Props) => {
   return (
-    <div className="flex flex-column align-items-start py-3">
-      {title && <div className="ml-2 font-bold">{title}</div>}
-      {description && <div className="ml-3 mt-2">{description}</div>}
+    <div className="flex py-3 gap-2">
+       {severity && <span className={`${getIcon(severity)} text-xl`} />}
+      <div className="flex flex-column align-items-start">
+       
+        {title && <div className="ml-2 font-bold">{title}</div>}
+        {description && <div className="ml-3 mt-2">{description}</div>}
+      </div>
     </div>
   );
 };

@@ -81,6 +81,6 @@ export function UserListProvider({
 }
 export const useUserList = (): UserListContextProps => {
   const context = useContext(UserListContext);
-  if (!context) throw new Error("Debe usarse desde dentro del provider");
+  if (!context) throw new Error("Debe usarse desde dentro del UserProvider");
   return context;
 };

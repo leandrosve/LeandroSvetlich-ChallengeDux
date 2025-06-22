@@ -5,6 +5,13 @@ export default interface User {
   usuario: string;
 }
 
+export interface UserCreateRequest {
+  id?: string | null;
+  estado: string;
+  sector: number;
+  usuario: string;
+}
+
 export interface UserFilters {
   page: number;
   pageSize: number;

@@ -21,7 +21,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
+  height: 100vh !important;
+  overflow: hidden!important;
 }
 
 a {
@@ -85,11 +86,12 @@ a {
   display: none;
 }
 
-.p-paginator{
+.p-paginator {
   display: flex;
   align-items: center;
 }
-.p-paginator-page, .p-paginator-element{
+.p-paginator-page,
+.p-paginator-element {
   display: inline-flex !important;
   align-items: center !important;
   text-align: center !important;

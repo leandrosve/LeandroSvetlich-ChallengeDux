@@ -1,24 +1,17 @@
 "use client";
-import User from "@/models/User";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog } from "primereact/dialog";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+import {
+  useCallback, useMemo
 } from "react";
 import UserForm from "./UserForm";
-import { useUserList } from "@/context/UserListContext";
-import UserService from "@/services/UserService";
 import { ProgressSpinner } from "primereact/progressspinner";
 import useUserToEdit from "@/hooks/useUserToEdit";
 import Alert from "@/components/common/Alert";
-import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
+import { ROUTES } from "@/constants/routes";
+import { useToast } from "@/context/ToastContext";
 
-type Mode = "create" | "edit" ;
+type Mode = "create" | "edit";
 
 function parseModalParams(
   searchParams: URLSearchParams
@@ -32,6 +25,7 @@ function parseModalParams(
 
 const UserFormModal = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [open, mode, userId] = useMemo(
     () => parseModalParams(searchParams),
@@ -40,7 +34,7 @@ const UserFormModal = () => {
 
   const { user, loading, error, reset } = useUserToEdit(userId);
 
-  const toast = useRef<Toast>(null);
+  const { showToast } = useToast();
 
   const onHide = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -50,48 +44,42 @@ const UserFormModal = () => {
     reset();
   }, [searchParams]);
 
-  const onSuccess = useCallback(
-    (action: "edit" | "create") => {
-      onHide();
-      toast.current?.show({
-        severity: "success",
-        summary: action == "edit" ? "Editar Usuario" : "Nuevo Usuario",
-        detail: `El usuario se ha ${
-          mode == "edit" ? "editado" : "creado"
-        } correctamente!`,
-        life: 3000,
-      });
-    },
-    [toast]
-  );
+  const onSuccess = useCallback((action: "edit" | "create") => {
+    showToast({
+      severity: "success",
+      title: action == "edit" ? "Editar Usuario" : "Nuevo Usuario",
+      description: `¡El usuario se ha ${
+        action == "edit" ? "editado" : "creado"
+      } correctamente!`,
+      duration: 30000,
+    });
+    router.replace(ROUTES.users, {scroll: false});
+  }, []);
 
   return (
-    <>
-      <Toast ref={toast} />
-      <Dialog
-        header={mode == "edit" ? "Editar Usuario" : "Nuevo Usuario"}
-        headerClassName="bg-blue-600 text-white dialog-header-primary"
-        draggable={false}
-        visible={open}
-        dismissableMask
-        blockScroll={true}
-        className="w-screen md:w-30rem"
-        onHide={onHide}
-      >
-        {loading ? (
-          <ProgressSpinner className="custom-spinner my-8" />
-        ) : error ? (
-          <Alert title={error} severity="error" className="my-3" />
-        ) : (
-          <UserForm
-            onCancel={onHide}
-            mode={mode}
-            user={user}
-            onSuccess={onSuccess}
-          />
-        )}
-      </Dialog>
-    </>
+    <Dialog
+      header={mode == "edit" ? "Editar Usuario" : "Nuevo Usuario"}
+      headerClassName="bg-blue-600 text-white dialog-header-primary"
+      draggable={false}
+      visible={open}
+      dismissableMask
+      blockScroll={true}
+      className="w-screen md:w-30rem"
+      onHide={onHide}
+    >
+      {loading ? (
+        <ProgressSpinner className="custom-spinner my-8" />
+      ) : error ? (
+        <Alert title={error} severity="error" className="my-3" />
+      ) : (
+        <UserForm
+          onCancel={onHide}
+          mode={mode}
+          user={user}
+          onSuccess={onSuccess}
+        />
+      )}
+    </Dialog>
   );
 };
 

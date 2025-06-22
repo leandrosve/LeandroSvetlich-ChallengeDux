@@ -3,17 +3,14 @@ import TextField from "@/components/common/TextField";
 import { userFormSchema } from "@/validation/userFormSchema";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDebounce } from "@/hooks/useDebounce";
-import UserService from "@/services/UserService";
-import { boolean } from "zod/v4-mini";
 import useValidateUserId from "@/hooks/useValidateUserId";
 import User from "@/models/User";
 import Alert from "@/components/common/Alert";
 import { useUserList } from "@/context/UserListContext";
+import { createUser, updateUser } from "@/services/UserService.client";
 
 const statuses = [
   {
@@ -67,25 +64,16 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
   const onSubmit = useCallback(
     async (data: User) => {
       setError("");
-
       let res;
       if (mode == "create") {
-        res = await UserService.create(data);
-      } else if (user) {
-        res = await UserService.update(user.id, data);
-      }
-      if (!res) return;
-      // Actualizar
+        res = await createUser(data);
+      } else if (mode == "edit" && user) {
+        res = await updateUser(user.id, data);
+      } else return;
+      
       if (res.hasError) {
         setError("Se ha producido un error");
         return;
-      }
-
-      // Si se creo o actualizo correctamente, actualizo los datos del context
-      if (res.data && user && mode == "edit") {
-        actions.updateUser(user.id, res.data);
-      } else {
-        actions.addUser(res.data);
       }
 
       onSuccess(mode);

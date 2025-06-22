@@ -1,6 +1,6 @@
-import UserService from "@/services/UserService";
+import UserService from "@/services/UserService.server";
 import React from "react";
-import UserListComponent from "./UserListComponent";
+import UserListComponent from "./list/UserListComponent";
 import Alert from "@/components/common/Alert";
 import { UserListProvider } from "@/context/UserListContext";
 
@@ -15,7 +15,6 @@ interface Props {
 /*** (Server Component) carga los usuarios e inicializa el contexto, para que en el primer render se muestre la lista correctamente */
 async function UsersDataLoader({ filters }: Props) {
   const { hasError, data } = await UserService.list(filters);
-
   if (hasError)
     return (
       <Alert
