@@ -1,5 +1,5 @@
 class Logger {
-  private static enabled = true;
+  private static enabled = process.env.NEXT_PUBLIC_ENABLE_LOGGER != "false";
 
   public static setEnabled(enabled: boolean) {
     this.enabled = enabled;
@@ -26,7 +26,10 @@ class Logger {
 
     const message = objects.map(this.safeStringify).join(" ");
 
-    console.log(`%c${prefix}${message}`, `background-color: ${background}; color: ${color}; padding: 2px 6px; border-radius: 3px`);
+    console.log(
+      `%c${prefix}${message}`,
+      `background-color: ${background}; color: ${color}; padding: 2px 6px; border-radius: 3px`
+    );
   }
 
   public static info(...objects: any[]) {

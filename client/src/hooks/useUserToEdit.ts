@@ -15,6 +15,7 @@ export default function useUserToEdit(userId: string | null) {
     setError("");
   }, [])
 
+  // Si el usuario esta en el estado local, lo tomo de ahi, si no lo voy a buscar a la API
   useEffect(() => {
     if (!userId) return;
 

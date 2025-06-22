@@ -11,6 +11,8 @@ interface Props {
     searchTerm?: string;
   };
 }
+
+/*** (Server Component) carga los usuarios e inicializa el contexto, para que en el primer render se muestre la lista correctamente */
 async function UsersDataLoader({ filters }: Props) {
   const { hasError, data } = await UserService.list(filters);
 

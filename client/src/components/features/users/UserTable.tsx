@@ -36,8 +36,6 @@ const getSeverity = (status: string) => {
 };
 
 function UserTable({ users, onSort, filter }: Props) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   const handleSort = useCallback((e: DataTableStateEvent) => {
     onSort(e.sortField as keyof User, e.sortOrder == 1 ? "asc" : "desc");

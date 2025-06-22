@@ -13,6 +13,7 @@ import { boolean } from "zod/v4-mini";
 import useValidateUserId from "@/hooks/useValidateUserId";
 import User from "@/models/User";
 import Alert from "@/components/common/Alert";
+import { useUserList } from "@/context/UserListContext";
 
 const statuses = [
   {
@@ -29,9 +30,9 @@ const sector = { name: "4000", value: 4000 };
 
 interface Props {
   onCancel: () => void;
-  mode: "create" | "edit" | null;
+  mode: "create" | "edit";
   user?: User | null;
-  onSuccess: () => void;
+  onSuccess: (mode: "create" | "edit") => void;
 }
 
 const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
@@ -52,31 +53,44 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
     },
   });
 
+  const { actions } = useUserList();
+
   const id = watch("id");
 
   const [error, setError] = useState("");
 
-  const { idAvailable, loading: validatingUserId } = useValidateUserId(id, user?.id);
+  const { idAvailable, loading: validatingUserId } = useValidateUserId(
+    id,
+    user?.id
+  );
 
   const onSubmit = useCallback(
     async (data: User) => {
-      console.log("DATA", data);
       setError("");
 
       let res;
       if (mode == "create") {
         res = await UserService.create(data);
+      } else if (user) {
+        res = await UserService.update(user.id, data);
       }
-
+      if (!res) return;
       // Actualizar
-      if (res?.hasError) {
+      if (res.hasError) {
         setError("Se ha producido un error");
         return;
       }
 
-      onSuccess();
+      // Si se creo o actualizo correctamente, actualizo los datos del context
+      if (res.data && user && mode == "edit") {
+        actions.updateUser(user.id, res.data);
+      } else {
+        actions.addUser(res.data);
+      }
+
+      onSuccess(mode);
     },
-    [mode]
+    [mode, user, actions]
   );
 
   return (
@@ -84,8 +98,7 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-column mt-4 gap-2"
     >
-      {user?.estado}
-      {error && <Alert title={error} />}
+      {error && <Alert title={error} severity="error" />}
       <TextField
         id="id"
         label="ID"

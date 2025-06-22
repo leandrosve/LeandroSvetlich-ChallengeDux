@@ -18,6 +18,54 @@ export default class UserService {
   private static readonly BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
   private static readonly PATH = "/personal";
 
+  private static async doFetch<T>(
+    method: string,
+    path: string,
+    params?: string,
+    body?: any
+  ): Promise<[APIResponse<T>, Headers | null]> {
+    const headers: HeadersInit = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    const url = `${this.BASE_URL}${this.PATH || ""}${path || ""}${
+      params ? "?" + params : ""
+    }`;
+
+    Logger.info(url);
+
+    try {
+      const res = await fetch(url, {
+        method: method,
+        headers: headers,
+        body: body ? JSON.stringify(body) : null,
+      });
+
+      if (!res.ok) {
+        const responseBody = (await res.json()) ?? {};
+        return [
+          {
+            status: res.status,
+            error: responseBody["error"] ?? "unknown_error",
+            hasError: true,
+          } as APIErrorResponse<T>,
+          res.headers,
+        ];
+      }
+      const responseBody = await res.json();
+      return [
+        {
+          status: res.status,
+          data: responseBody as T,
+          hasError: false,
+        } as APISuccessfulResponse<T>,
+        res.headers,
+      ];
+    } catch (err) {
+      console.log(err);
+      return [{ hasError: true, error: "unknown_error" }, null];
+    }
+  }
+
   public static async list(
     filters: UserFilters
   ): Promise<APIResponse<{ users: User[]; total: number }>> {
@@ -39,30 +87,27 @@ export default class UserService {
     if (filters.id) {
       params.set("id", filters.id);
     }
-    const url = `${this.BASE_URL}${this.PATH}?${params.toString()}`;
-    console.log(url);
-    try {
-      const res = await fetch(url);
 
-      if (res.status != 200) {
-        return {
-          hasError: true,
-          error: "unknown_error",
-        };
-      }
-      const users: User[] = await res.json();
-      const total = Number(res.headers.get("X-Total-Count") ?? 0);
+    const [res, headers] = await this.doFetch<User[]>(
+      "GET",
+      "",
+      params.toString()
+    );
 
-      return {
-        hasError: false,
-        data: { users: users, total },
-      };
-    } catch {
+    if (res.hasError) {
       return {
         hasError: true,
-        error: "unknown_error",
+        error: res.error,
       };
     }
+
+    const users: User[] = res.data;
+    const total = Number(headers?.get("X-Total-Count") ?? 0);
+
+    return {
+      hasError: false,
+      data: { users: users, total },
+    };
   }
 
   public static async isUserIdAvailable(
@@ -101,34 +146,31 @@ export default class UserService {
   }
 
   public static async create(user: User): Promise<APIResponse<User>> {
-    const url = `${this.BASE_URL}${this.PATH}?sector=4000`;
+    const [res] = await this.doFetch<User>("POST", "", "sector=4000", user);
 
-    try {
-      const res = await await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (res.status != 201) {
-        return {
-          hasError: true,
-          error: "api_error",
-        };
-      }
-
-      const createdUserId: { id: string } = await res.json();
-      Logger.info("Se creo el usuario - ID: " + createdUserId.id);
-      return {
-        hasError: false,
-        data: user,
-      };
-    } catch {
+    if (res.hasError) {
       return {
         hasError: true,
-        error: "unknown_error",
+        error: "api_error",
       };
     }
+
+    const createdUserId: string = res.data.id;
+    Logger.info("Se creo el usuario - ID: " + createdUserId);
+    return {
+      hasError: false,
+      data: user,
+    };
+  }
+
+  public static async update(id: string, user: User): Promise<APIResponse<User>> {
+    const [res] = await this.doFetch<User>(
+      "PATCH",
+      `/${id}`,
+      "sector=4000",
+      user
+    );
+
+    return res;
   }
 }

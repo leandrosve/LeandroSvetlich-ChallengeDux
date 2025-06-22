@@ -1,18 +1,12 @@
 "use client";
 import UserTable from "./UserTable";
-import User from "@/models/User";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { buildUserFilterUrl } from "@/utils/filters";
-import dynamic from "next/dynamic";
-import { UserListProvider, useUserList } from "@/context/UserListContext";
+import { useUserList } from "@/context/UserListContext";
 import UserFormModal from "./create/UserFormModal";
-
-const ClientPaginator = dynamic(
-  () => import("@/components/common/ClientPaginator"),
-  { ssr: false }
-);
+import { Paginator } from "primereact/paginator";
 
 interface Props {
   filters: {
@@ -23,7 +17,7 @@ interface Props {
 }
 
 function UserListComponent({ filters }: Props) {
-  const data = useUserList();
+  const { data } = useUserList();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -50,14 +44,16 @@ function UserListComponent({ filters }: Props) {
 
   return (
     <div className="flex-grow-1 flex flex-column">
-      <UserTable users={data.data.users} onSort={onSort} filter={filters} />
-      <ClientPaginator
-        pageSize={filters.pageSize}
-        totalCount={data.data.total}
-        page={filters.page}
-        rowsPerPageOptions={[10, 20, 30]}
-        onPageChange={onPageChange}
-      />
+      <UserTable users={data.users} onSort={onSort} filter={filters} />
+      <div className="flex justify-content-center mt-auto">
+        <Paginator
+          first={(filters.page - 1) * filters.pageSize}
+          rows={filters.pageSize}
+          totalRecords={data.total}
+          rowsPerPageOptions={[10, 20, 30]}
+          onPageChange={(e) => onPageChange(e.page, e.rows)}
+        />
+      </div>
       <UserFormModal />
     </div>
   );

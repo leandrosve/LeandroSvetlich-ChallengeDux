@@ -80,3 +80,18 @@ a {
 .dialog-header-primary .p-dialog-header-icon:hover {
   background: rgba(161, 194, 255, 0.589);
 }
+
+.p-hidden-accessible {
+  display: none;
+}
+
+.p-paginator{
+  display: flex;
+  align-items: center;
+}
+.p-paginator-page, .p-paginator-element{
+  display: inline-flex !important;
+  align-items: center !important;
+  text-align: center !important;
+  justify-content: center;
+}
