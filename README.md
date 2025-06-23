@@ -47,3 +47,26 @@
 ### Estructura del proyecto
 
 - Organicé el código siguiendo una estructura basada en **features**, que me permitió mantener el foco en la funcionalidad y la escalabilidad, en lugar de seguir una separación estricta por atomic design (atoms/, molecules/, etc).
+
+## ⚙️ Cómo correr el proyecto localmente
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/leandrosve/LeandroSvetlich-ChallengeDux.git
+cd LeandroSvetlich-ChallengeDux/client
+```
+
+### 2. Instalar dependencias
+```bash
+npm install
+```
+### 3. Levantar en modo desarrollo
+```bash
+npm run dev
+```
+### 4. Correr en modo producción (opcional)
+```bash
+npm run build
+npm start
+```
