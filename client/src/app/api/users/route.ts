@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { revalidateTag } from "next/cache";
 import UserService from "@/services/UserService.server";
 import { userFormSchema } from "@/validation/userFormSchema";
-import User, { UserCreateRequest } from "@/models/User";
+import User from "@/models/User";
 import Logger from "@/utils/Logger";
 import { CACHE_TAGS } from "@/constants/cache-tags";
 

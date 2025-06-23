@@ -1,24 +1,45 @@
 import { ROUTES } from "@/constants/routes";
 import User, { UserFilters } from "@/models/User";
 
+const DEFAULT_USER_FILTERS: UserFilters = {
+  searchTerm: undefined,
+  status: undefined,
+  page: 1,
+  pageSize: 10,
+  sort: "id",
+  order: "desc",
+};
+
+const FILTER_KEYS: {
+  [K in keyof UserFilters]?: string;
+} = {
+  searchTerm: "search",
+  status: "status",
+  page: "page",
+  pageSize: "size",
+  sort: "sort",
+  order: "order",
+};
+
 export function buildUserFilterUrl(filters: UserFilters): string {
   const params = new URLSearchParams(window.location.search);
-  if (filters.searchTerm) params.set("search", filters.searchTerm);
-  else params.delete("search");
-  if (filters.status)
-    params.set("status", filters.status.toLowerCase());
-  else params.delete("status");
-  if (filters.page) params.set("page", filters.page.toString());
-  else params.delete("page");
-  if (filters.pageSize) params.set("size", filters.pageSize.toString());
-  else params.delete("size");
-  if (filters.sort) params.set("sort", filters.sort);
-  else {
-    params.delete("sort");
+
+  for (const key in FILTER_KEYS) {
+    const queryKey = FILTER_KEYS[key as keyof UserFilters]!;
+    const value = filters[key as keyof UserFilters];
+    const defaultValue = DEFAULT_USER_FILTERS[key as keyof UserFilters];
+
+    if (value !== undefined && value !== defaultValue) {
+      params.set(queryKey, String(value).toLowerCase());
+    } else {
+      params.delete(queryKey);
+    }
+  }
+
+  // Si no hay sort, quitamos el order tambien
+  if (!filters.sort || filters.sort === DEFAULT_USER_FILTERS.sort) {
     params.delete("order");
   }
-  if (filters.order) params.set("order", filters.order);
-  else params.delete("order");
 
   return `${ROUTES.users}?${params.toString()}`;
 }
@@ -27,7 +48,10 @@ export function parseUserFiltersFromParams(
   params: Record<string, string | string[] | undefined>
 ): UserFilters {
   const page = parseInt(params.page as string) || 1;
-  const pageSize = parseInt(params.size as string) || 10;
+  let pageSize = parseInt(params.size as string) || 10;
+  if (![10, 20, 30].includes(pageSize)) {
+    pageSize = 10;
+  }
   const searchTerm =
     typeof params.search === "string" ? params.search : undefined;
 

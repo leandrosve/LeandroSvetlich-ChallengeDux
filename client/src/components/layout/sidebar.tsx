@@ -3,7 +3,7 @@ import React from "react";
 
 const Sidebar = () => {
   return (
-    <div className="flex bg-bluegray-800 flex-column gap-2 w-4rem align-items-center py-3">
+    <div className="bg-bluegray-800 flex-column gap-2 w-4rem align-items-center py-3 hidden md:flex shadow-2">
       {[1, 2, 3, 4, 5, 6].map((key) => (
         <Button
           key={key}

@@ -1,5 +1,4 @@
 import { InputText, InputTextProps } from "primereact/inputtext";
-import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import React, { forwardRef } from "react";
 import Field from "./Field";
@@ -9,7 +8,6 @@ interface Props extends InputTextProps {
   label: string;
   placeholder?: string;
   leftIcon?: string;
-  invalid?: boolean;
   errorMessage?: string;
   disabled?: boolean;
   helperText?: string;
@@ -49,7 +47,9 @@ const TextField = forwardRef<HTMLInputElement, Props>(
             disabled={disabled}
             className={`w-full ${leftIcon ? "pl-5" : ""} ${
               loading || showCheck ? "pr-5" : ""
-            }`}
+            }
+             ${!!errorMessage ? "border-red-600" : ""}
+            `}
             placeholder={placeholder}
             ref={ref}
             {...inputTextProps}
@@ -85,4 +85,7 @@ const TextField = forwardRef<HTMLInputElement, Props>(
     );
   }
 );
+
+TextField.displayName = "TextField";
+
 export default TextField;

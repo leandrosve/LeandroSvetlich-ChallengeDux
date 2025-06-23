@@ -46,6 +46,7 @@ const Alert = ({
       }}
       className={` w-full justify-content-start ${className}`}
       severity={severity}
+      {...props}
       content={
         <AlertContent
           title={title}

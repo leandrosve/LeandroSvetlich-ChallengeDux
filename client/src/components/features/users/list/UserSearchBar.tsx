@@ -3,7 +3,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Button } from "primereact/button";
@@ -12,42 +12,43 @@ import { buildUserFilterUrl } from "@/utils/filters";
 
 export default function UserSearchBar({ filters }: { filters: UserFilters }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") ?? "");
-  const [initialRender, setInitialRender] = useState(true);
-
+  const [searchTerm, setSearchTerm] = useState(filters.searchTerm ?? "");
 
   const ref = useRef<HTMLInputElement>(null);
   const [debouncedSearchTerm, setDebouncedTerm] = useDebounce(searchTerm, 500);
+  const currentSearchTerm = filters.searchTerm;
+
+  useEffect(() => {
+    setSearchTerm(filters.searchTerm ?? "");
+  }, [filters]);
 
   const updateURL = useCallback(
     (term: string) => {
       const path = buildUserFilterUrl({ ...filters, searchTerm: term.trim() });
       router.replace(path, { scroll: false });
     },
-    [searchParams, router]
+    [router, filters]
   );
 
   const clearInput = useCallback(() => {
     setSearchTerm("");
     setDebouncedTerm("");
     ref.current?.focus();
-  }, [ref]);
+  }, [ref, setDebouncedTerm]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (initialRender) {
-      setInitialRender(false)
-      return
-    };
+    if (currentSearchTerm == debouncedSearchTerm) return;
+    if (!currentSearchTerm && !debouncedSearchTerm) return;
     updateURL(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
   return (
-    <div className="inline-flex  border-1 border-round-md relative overflow-hidden border-subtle">
-      <IconField iconPosition="left">
+    <div className="inline-flex  border-1 border-round-md relative overflow-hidden border-subtle w-full md:w-25rem">
+      <IconField iconPosition="left" className="w-full">
         <InputIcon className="pi pi-search"> </InputIcon>
         <InputText
-          className="w-25rem border-noround-right border-none"
+          className="w-full border-noround-right border-none"
           placeholder="Buscar"
           ref={ref}
           value={searchTerm}
@@ -56,12 +57,12 @@ export default function UserSearchBar({ filters }: { filters: UserFilters }) {
       </IconField>
 
       {searchTerm && (
-        <div className="absolute right-0 t-0 w-3em h-2">
+        <div className="absolute right-0 t-0 w-3em h-full top-0">
           <Button
             icon="pi pi-times"
             text
             severity="secondary"
-            className={`border-noround-left `}
+            className={`border-noround-left  `}
             onClick={clearInput}
           />
         </div>

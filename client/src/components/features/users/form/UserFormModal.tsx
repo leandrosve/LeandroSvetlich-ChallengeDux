@@ -1,26 +1,13 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog } from "primereact/dialog";
-import { act, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import UserForm from "./UserForm";
 import { ProgressSpinner } from "primereact/progressspinner";
 import useUserToEdit from "@/hooks/useUserToEdit";
 import Alert from "@/components/common/Alert";
 import { ROUTES } from "@/constants/routes";
 import { useToast } from "@/context/ToastContext";
-import { useUserList } from "@/context/UserListContext";
-
-type Mode = "create" | "edit";
-
-function parseModalParams(
-  searchParams: URLSearchParams
-): [boolean, Mode, string | null] {
-  const mode = searchParams.get("modal") as Mode;
-  const isValidMode = mode === "create" || mode === "edit";
-  const userId =
-    isValidMode && mode === "edit" ? searchParams.get("user") : null;
-  return [isValidMode, isValidMode ? mode : "create", userId];
-}
 
 const UserFormModal = () => {
   const searchParams = useSearchParams();
@@ -57,7 +44,7 @@ const UserFormModal = () => {
     params.delete("user");
     window.history.replaceState(null, "", `?${params.toString()}`);
     reset();
-  }, [searchParams]);
+  }, [searchParams, reset]);
 
   const onSuccess = useCallback(
     (action: "edit" | "create") => {
@@ -79,7 +66,7 @@ const UserFormModal = () => {
 
       router.refresh();
     },
-    [searchParams]
+    [onHide, router, showToast]
   );
 
   return (

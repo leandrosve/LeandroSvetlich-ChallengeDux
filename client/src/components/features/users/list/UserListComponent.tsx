@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { buildUserFilterUrl } from "@/utils/filters";
 import { useUserList } from "@/context/UserListContext";
-import UserFormModal from "../create/UserFormModal";
 import { Paginator } from "primereact/paginator";
 import User from "@/models/User";
 import { deleteUser } from "@/services/UserService.client";
 import { useToast } from "@/context/ToastContext";
+import dynamic from "next/dynamic";
 
 interface Props {
   filters: {
@@ -18,6 +18,10 @@ interface Props {
     searchTerm?: string;
   };
 }
+
+const UserFormModal = dynamic(() => import("../form/UserFormModal"), {
+  ssr: false,
+});
 
 function UserListComponent({ filters }: Props) {
   const { data } = useUserList();
@@ -36,7 +40,7 @@ function UserListComponent({ filters }: Props) {
         scroll: false,
       });
     },
-    [filters, searchParams]
+    [filters, router]
   );
 
   const onSort = useCallback((sortField: string, sortOrder: string) => {
@@ -44,27 +48,29 @@ function UserListComponent({ filters }: Props) {
     params.set("sort", `${sortField}`);
     params.set("order", `${sortOrder}`);
     router.replace(`${ROUTES.users}?${params.toString()}`, { scroll: false });
+  }, [router, searchParams]);
+
+  const onEditUser = useCallback((user: User) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("modal", "edit");
+    params.set("user", user.id);
+    window.history.replaceState(null, "", `?${params.toString()}`);
   }, []);
 
-  const onDeleteUser = async (user: User) => {
+  const onDeleteUser = useCallback(async (user: User) => {
     const res = await deleteUser(user.id);
-    if (res.hasError) {
-      showToast({
-        title: "Eliminar Usuario",
-        description: "Ocurrió un error al intentar eliminar el usuario",
-        severity: "error",
-        duration: 3000,
-      });
-      return;
-    }
+
     showToast({
       title: "Eliminar Usuario",
-      description: "El usuario se eliminó correctamente",
-      severity: "success",
+      description: res.hasError
+        ? "Ocurrió un error al intentar eliminar el usuario"
+        : "El usuario se eliminó correctamente",
+      severity: res.hasError ? "error" : "success",
       duration: 3000,
     });
+
     router.refresh();
-  };
+  }, [router, showToast]);
 
   return (
     <div className="flex-grow-1 flex flex-column">
@@ -73,6 +79,7 @@ function UserListComponent({ filters }: Props) {
         onSort={onSort}
         filter={filters}
         onDeleteUser={onDeleteUser}
+        onEditUser={onEditUser}
       />
       <div className="flex justify-content-center mt-auto">
         <Paginator

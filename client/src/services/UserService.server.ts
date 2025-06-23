@@ -1,6 +1,5 @@
 import { CACHE_TAGS } from "@/constants/cache-tags";
-import User, { UserCreateRequest, UserFilters } from "@/models/User";
-import Logger from "@/utils/Logger";
+import User, { UserFilters } from "@/models/User";
 
 type APISuccessfulResponse<T> = {
   data: T;

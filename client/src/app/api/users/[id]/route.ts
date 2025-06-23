@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import UserService from "@/services/UserService.server";
 import { userFormSchema } from "@/validation/userFormSchema";
 import User from "@/models/User";

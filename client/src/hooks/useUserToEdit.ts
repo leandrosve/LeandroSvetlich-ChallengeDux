@@ -1,7 +1,6 @@
 import { useUserList } from "@/context/UserListContext";
 import User from "@/models/User";
 import { getById } from "@/services/UserService.client";
-import UserService from "@/services/UserService.server";
 import { useCallback, useEffect, useState } from "react";
 
 export default function useUserToEdit(userId: string | null) {

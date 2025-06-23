@@ -1,7 +1,7 @@
 "use client";
 import { UserFilters } from "@/models/User";
 import { buildUserFilterUrl } from "@/utils/filters";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Dropdown } from "primereact/dropdown";
 import { useCallback } from "react";
 
@@ -31,15 +31,18 @@ const valueTemplate = (option: { name: string; value: string }) => {
 
 const UserStatusFilter = ({ filters }: { filters: UserFilters }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const updateURL = useCallback(
     (status: string) => {
       const sanitizedStatus = status == "TODOS" ? undefined : status;
-      const path = buildUserFilterUrl({ ...filters, status: sanitizedStatus });
+      const path = buildUserFilterUrl({
+        ...filters,
+        status: sanitizedStatus,
+        page: 1,
+      });
       router.replace(path, { scroll: false });
     },
-    [searchParams, router]
+    [router, filters]
   );
 
   return (
@@ -48,6 +51,7 @@ const UserStatusFilter = ({ filters }: { filters: UserFilters }) => {
       options={statuses}
       optionLabel="name"
       placeholder="Estado"
+      className=" w-full md:w-15rem"
       onChange={(e) => updateURL(e.value)}
       valueTemplate={valueTemplate}
     />

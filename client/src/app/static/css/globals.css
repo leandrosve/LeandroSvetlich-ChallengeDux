@@ -1,0 +1,46 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+.border-subtle {
+  border-color: #d1d5db !important;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+.box-size-3 {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.custom-spinner {
+  display: flex !important;
+  height: 4rem !important;
+  width: 4rem !important;
+}
+.custom-spinner .p-progress-spinner-circle {
+  stroke: currentColor !important;
+  opacity: 0.5;
+  animation: p-progress-spinner-dash 1.5s ease-in-out infinite;
+}

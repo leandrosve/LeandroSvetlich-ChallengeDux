@@ -1,4 +1,3 @@
-import UserService from "@/services/UserService.server";
 import { isUserIdAvailable } from "@/services/UserService.client";
 import { userFormSchema } from "@/validation/userFormSchema";
 import { useEffect, useState } from "react";
@@ -26,7 +25,6 @@ const useValidateUserId = (
     setIdAvailable(null);
 
     // Si el ID no pasa la validacion, no hago fetch
-
     if (!id || !idSchema.safeParse(id).success) return;
     setLoading(true);
     const timer = setTimeout(async () => {

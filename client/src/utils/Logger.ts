@@ -32,27 +32,27 @@ class Logger {
     );
   }
 
-  public static info(...objects: any[]) {
+  public static info(...objects: object[]) {
     this.log("#296fa8", "#90cdf4", objects, "🏁 ");
   }
 
-  public static warn(...objects: any[]) {
+  public static warn(...objects: object[]) {
     this.log("#7f611f", "#f4d990", objects, "🚨 ");
   }
 
-  public static danger(...objects: any[]) {
+  public static danger(...objects: object[]) {
     this.log("#a82929", "#f49090", objects, "💀 ");
   }
 
-  public static success(...objects: any[]) {
+  public static success(...objects: object[]) {
     this.log("#1f7f2f", "#9ff490", objects, "✅ ");
   }
 
-  public static debug(...objects: any[]) {
+  public static debug(...objects: object[]) {
     this.log("#4d4d4d", "#c2c2c2", objects, "🐛 ");
   }
 
-  public static socket(...objects: any[]) {
+  public static socket(...objects: object[]) {
     this.log("#791f7f", "#dcabf7", objects, "🎆 ");
   }
 }

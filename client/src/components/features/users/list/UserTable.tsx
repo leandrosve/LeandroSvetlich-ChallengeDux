@@ -3,11 +3,7 @@ import User, { UserFilters } from "@/models/User";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { confirmDialog } from "primereact/confirmdialog";
-import {
-  DataTable,
-  DataTableSelectEvent,
-  DataTableStateEvent,
-} from "primereact/datatable";
+import { DataTable, DataTableStateEvent } from "primereact/datatable";
 import { Menu } from "primereact/menu";
 import { Skeleton } from "primereact/skeleton";
 import { Tag } from "primereact/tag";
@@ -22,6 +18,7 @@ interface Props {
   users: User[];
   onSort: (sortField: keyof User, sortOrder: "asc" | "desc") => void;
   onDeleteUser: (user: User) => Promise<void>;
+  onEditUser: (user: User) => void;
   filter: UserFilters;
 }
 
@@ -42,24 +39,20 @@ const getSeverity = (status: string) => {
   }
 };
 
-function UserTable({ users, onSort, onDeleteUser, filter }: Props) {
-  const handleSort = useCallback((e: DataTableStateEvent) => {
-    onSort(e.sortField as keyof User, e.sortOrder == 1 ? "asc" : "desc");
-  }, []);
-
-  const onRowSelect = useCallback((e: DataTableSelectEvent) => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("modal", "edit");
-    params.set("user", e.data.id);
-    window.history.replaceState(null, "", `?${params.toString()}`);
-  }, []);
+function UserTable({ users, onSort, onDeleteUser, onEditUser, filter }: Props) {
+  const handleSort = useCallback(
+    (e: DataTableStateEvent) => {
+      onSort(e.sortField as keyof User, e.sortOrder == 1 ? "asc" : "desc");
+    },
+    [onSort]
+  );
 
   const menu = useRef<Menu>(null);
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const actionsTemplate = useMemo(
-    () => (user: User) => {
+  const actionsTemplate = useCallback(
+    (user: User) => {
       return (
         <Button
           icon="pi pi-ellipsis-h"
@@ -76,14 +69,17 @@ function UserTable({ users, onSort, onDeleteUser, filter }: Props) {
     [menu, setSelectedUser]
   );
 
-  const confirmDelete = useCallback((user: User) => {
-    confirmDialog({
-      message: "¿Estás seguro que deseas eliminar el usuario?",
-      header: "Eliminar usuario",
-      defaultFocus: "cancel",
-      accept: () => onDeleteUser(user),
-    });
-  }, []);
+  const confirmDelete = useCallback(
+    (user: User) => {
+      confirmDialog({
+        message: "¿Estás seguro que deseas eliminar el usuario?",
+        header: "Eliminar usuario",
+        defaultFocus: "cancel",
+        accept: () => onDeleteUser(user),
+      });
+    },
+    [onDeleteUser]
+  );
 
   const actionMenuItems = useMemo(
     () => [
@@ -92,18 +88,17 @@ function UserTable({ users, onSort, onDeleteUser, filter }: Props) {
           {
             label: "Editar",
             icon: "pi pi-pencil",
+            command: () => !!selectedUser && onEditUser(selectedUser),
           },
           {
             label: "Eliminar",
             icon: "pi pi-trash",
-            command: () => {
-              if (selectedUser) confirmDelete(selectedUser);
-            },
+            command: () => !!selectedUser && confirmDelete(selectedUser),
           },
         ],
       },
     ],
-    [selectedUser, confirmDelete]
+    [selectedUser, confirmDelete, onEditUser]
   );
 
   return (
@@ -114,7 +109,7 @@ function UserTable({ users, onSort, onDeleteUser, filter }: Props) {
         className="min-w-full"
         value={users}
         size="small"
-        onRowSelect={onRowSelect}
+        onRowSelect={(e) => onEditUser(e.data)}
         selectionMode="single"
         emptyMessage="No se han encontrado resultados"
         onSort={handleSort}
@@ -126,7 +121,7 @@ function UserTable({ users, onSort, onDeleteUser, filter }: Props) {
           field="id"
           header="Id"
           sortable
-          style={{ width: "15%" }}
+          style={{ width: "15%", height:'4rem' }}
         ></Column>
         <Column
           field="usuario"
