@@ -3,7 +3,7 @@ import TextField from "@/components/common/TextField";
 import { userFormSchema } from "@/validation/userFormSchema";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
-import { useCallback, useState } from "react";
+import { act, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useValidateUserId from "@/hooks/useValidateUserId";
@@ -70,10 +70,14 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
       } else if (mode == "edit" && user) {
         res = await updateUser(user.id, data);
       } else return;
-      
+
       if (res.hasError) {
         setError("Se ha producido un error");
         return;
+      }
+
+      if (mode == "edit" && user) {
+        actions.updateUser(user.id, res.data);
       }
 
       onSuccess(mode);
@@ -93,6 +97,7 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
         placeholder="Ingrese el ID del usuario"
         leftIcon="pi pi-hashtag"
         helperText="El ID debe ser númerico"
+        disabled={!!user?.id}
         keyfilter="num"
         showCheck={!errors.id && dirtyFields.id && idAvailable == true}
         loading={validatingUserId}

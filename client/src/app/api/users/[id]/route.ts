@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import UserService from "@/services/UserService.server";
 import { userFormSchema } from "@/validation/userFormSchema";
 import User from "@/models/User";
@@ -23,7 +23,7 @@ export async function PATCH(
 
   const res = await UserService.update(params.id, newUser);
 
-  Logger.info(res);
+  Logger.info(newUser, res);
   if (res.hasError) {
     return new Response(JSON.stringify(res), {
       status: 400,

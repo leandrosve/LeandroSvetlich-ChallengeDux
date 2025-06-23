@@ -4,43 +4,35 @@ import User from "@/models/User";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 const PATH = "/personal";
 
-// Envuelve a los otros request para atrapar cualquier error inesperado
-async function safeFetch<T>(
-  fetchFn: () => Promise<Response>
-): Promise<APIResponse<T>> {
-  try {
-    const res = await fetchFn();
-    if (!res.ok) {
-      return { hasError: true, error: `unknown_error` };
-    }
-    const data = (await res.json()) as T;
-    return { hasError: false, data };
-  } catch {
-    return { hasError: true, error: "Error inesperado al hacer la solicitud" };
+export async function createUser(user: User): Promise<APIResponse<User>> {
+  const res = await fetch("/api/users", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+
+  if (res.ok) {
+    return (await res.json()) as APIResponse<User>;
   }
+
+  return { hasError: true, error: "unknown_error" };
 }
 
-export function createUser(user: User): Promise<APIResponse<User>> {
-  return safeFetch<User>(() =>
-    fetch("/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    })
-  );
-}
-
-export function updateUser(
+export async function updateUser(
   userId: string,
   user: User
 ): Promise<APIResponse<User>> {
-  return safeFetch<User>(() =>
-    fetch("/api/users/" + userId, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    })
-  );
+  const res = await fetch("/api/users/" + userId, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+
+  if (res.ok) {
+    return (await res.json()) as APIResponse<User>;
+  }
+
+  return { hasError: true, error: "unknown_error" };
 }
 
 export async function isUserIdAvailable(

@@ -11,8 +11,7 @@ export default async function UsersPage({
   searchParams: Record<string, string>;
 }) {
   const filters = parseUserFiltersFromParams(searchParams);
-  const refreshToken = Date.now();
-
+  const key = new Date().getTime();
   return (
     <div className="p-2 px-4 flex flex-column min-h-full">
       <div className="mb-4 flex justify-content-between align-items-center">
@@ -22,7 +21,7 @@ export default async function UsersPage({
       <div className="mb-4 flex justify-content-between">
         <UserSearchBar filters={filters} />
       </div>
-      <Suspense key={refreshToken} fallback={<UserTableSkeleton />}>
+      <Suspense key={key} fallback={<UserTableSkeleton />}>
         <UsersDataLoader filters={filters} />
       </Suspense>
     </div>
