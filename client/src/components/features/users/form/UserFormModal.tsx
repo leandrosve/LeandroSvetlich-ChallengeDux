@@ -35,7 +35,7 @@ const UserFormModal = () => {
       });
       return;
     }
-    setModalState((prev) => ({ ...prev, open: false }));
+    setModalState((prev) => ({ ...prev, userId:null, open: false }));
   }, [searchParams]);
 
   const { user, loading, error, reset } = useUserToEdit(modalState.userId);
