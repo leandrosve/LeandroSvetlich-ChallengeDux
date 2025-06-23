@@ -10,10 +10,12 @@ import { Tag } from "primereact/tag";
 import { useCallback, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
+/* Import dinámico, para evitar problemas con las referencias en el primer render*/
 const ConfirmDialog = dynamic(
   () => import("primereact/confirmdialog").then((mod) => mod.ConfirmDialog),
   { ssr: false }
 );
+
 interface Props {
   users: User[];
   onSort: (sortField: keyof User, sortOrder: "asc" | "desc") => void;

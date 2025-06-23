@@ -3,6 +3,10 @@ import User from "@/models/User";
 import { getById } from "@/services/UserService.client";
 import { useCallback, useEffect, useState } from "react";
 
+/**
+ * Obtiene los datos del usuario a editar en base al ID indicado en la URL
+ * Intenta obtenerlo del contexto local, si no se encuentra llama a la API de Dux
+ */
 export default function useUserToEdit(userId: string | null) {
   const { data } = useUserList();
   const [user, setUser] = useState<User | null>(null);

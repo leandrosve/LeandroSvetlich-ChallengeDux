@@ -5,6 +5,10 @@ import { Toast } from "primereact/toast";
 import { ToastMessage } from "primereact/toast";
 import { useToast } from "@/context/ToastContext"; // Ajustá la ruta según tu proyecto
 
+/**
+ * Toast de notificaciones, consume el contexto ToastContext
+ * Esta hecho de esta manera para que la notificacion perdure aunque se navege a otra ruta
+ */
 const ToastNotification = () => {
   const toastRef = useRef<Toast>(null);
   const { toastContent } = useToast();

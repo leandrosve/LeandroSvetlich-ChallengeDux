@@ -1,6 +1,7 @@
 import { ROUTES } from "@/constants/routes";
 import User, { UserFilters } from "@/models/User";
 
+/* Contiene la para serializar y deserializar de filtros y paginacion del listado de usuarios */
 const DEFAULT_USER_FILTERS: UserFilters = {
   searchTerm: undefined,
   status: undefined,

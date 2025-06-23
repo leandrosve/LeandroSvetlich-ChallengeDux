@@ -9,6 +9,8 @@ import {
   useCallback,
 } from "react";
 
+/* Contexto del listado de usuarios, utilizado principalmente para evitar prop drilling en el callback luego de modificar un usuario */
+
 interface UserListData {
   users: User[];
   total: number;

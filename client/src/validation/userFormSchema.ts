@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+/** Esquema de validacion del formulario de crear/editar usuario */
 export const userFormSchema = z.object({
   id: z
     .string({

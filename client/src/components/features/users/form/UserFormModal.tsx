@@ -9,6 +9,9 @@ import Alert from "@/components/common/Alert";
 import { ROUTES } from "@/constants/routes";
 import { useToast } from "@/context/ToastContext";
 
+/**
+ * Modal de creacion/edicion de usuario, es manejado mediante query params
+ */
 const UserFormModal = () => {
   const searchParams = useSearchParams();
   const router = useRouter();

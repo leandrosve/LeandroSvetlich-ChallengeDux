@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+/**
+ * Pequeño hook para manejar valores debounced
+ */
 export function useDebounce<T>(
   value: T,
   delay: number

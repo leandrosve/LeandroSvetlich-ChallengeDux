@@ -1,3 +1,6 @@
+/* 
+  Pequeña clase para mejorar los logs, y permitir deshabilitarlos dependiendo del ambiente
+*/
 class Logger {
   private static enabled = process.env.NEXT_PUBLIC_ENABLE_LOGGER != "false";
 

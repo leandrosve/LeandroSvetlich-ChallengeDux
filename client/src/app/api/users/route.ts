@@ -6,6 +6,9 @@ import User from "@/models/User";
 import Logger from "@/utils/Logger";
 import { CACHE_TAGS } from "@/constants/cache-tags";
 
+/**
+ * Valida el modelo, crea un usuario e invalida el tag
+ */
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const parsed = userFormSchema.safeParse(body);

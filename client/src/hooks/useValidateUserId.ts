@@ -2,9 +2,10 @@ import { isUserIdAvailable } from "@/services/UserService.client";
 import { userFormSchema } from "@/validation/userFormSchema";
 import { useEffect, useState } from "react";
 
-// Hago esto para reutilizar la validacion del id
+// Obtengo el shape del id del mismo schema utilizado en el formulario
 const idSchema = userFormSchema.shape.id;
 
+/* Valida que el id del usuario sea unico, hace llamados a la API de dux */
 const useValidateUserId = (
   id: string | undefined | null,
   initialUserId?: string | undefined | null

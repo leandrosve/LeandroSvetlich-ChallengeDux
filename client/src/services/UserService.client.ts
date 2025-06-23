@@ -4,6 +4,9 @@ import User from "@/models/User";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 const PATH = "/personal";
 
+/**
+ * Hace un request al route handler encargado de la creacion de un usuario (y refrescar tag)
+ */
 export async function createUser(user: User): Promise<APIResponse<User>> {
   const res = await fetch("/api/users", {
     method: "POST",
@@ -18,6 +21,9 @@ export async function createUser(user: User): Promise<APIResponse<User>> {
   return { hasError: true, error: "unknown_error" };
 }
 
+/**
+ * Hace un request al route handler encargado del update de un usuario (y refrescar tag)
+ */
 export async function updateUser(
   userId: string,
   user: User
@@ -35,6 +41,10 @@ export async function updateUser(
   return { hasError: true, error: "unknown_error" };
 }
 
+
+/**
+ * Hace un request al route handler encargado de eliminar un usuario (y refrescar tag)
+ */
 export async function deleteUser(
   userId: string
 ): Promise<APIResponse<boolean>> {
@@ -50,6 +60,9 @@ export async function deleteUser(
   return { hasError: true, error: "unknown_error" };
 }
 
+/**
+ * Llama directamente a la API de Dux para verificar si un id esta disponible (no depende del sector)
+ */
 export async function isUserIdAvailable(
   id: string
 ): Promise<APIResponse<{ id: string; available: boolean }>> {
@@ -67,6 +80,9 @@ export async function isUserIdAvailable(
   };
 }
 
+/**
+ * Llama directamente a la API de Dux para obtener un usuario (debe pertencer al sector 4000)
+ */
 export async function getById(
   id: string,
   restrictSector: boolean

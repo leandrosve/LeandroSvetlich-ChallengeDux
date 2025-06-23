@@ -6,6 +6,9 @@ import User from "@/models/User";
 import Logger from "@/utils/Logger";
 import { CACHE_TAGS } from "@/constants/cache-tags";
 
+/**
+ * Valida el modelo del usuario, lo actualiza e invalida el tag
+ */
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -34,8 +37,11 @@ export async function PATCH(
   return new Response(JSON.stringify(res));
 }
 
+/**
+ * Elimina un usuario e invalida el tag
+ */
 export async function DELETE(
-  req: NextRequest,
+  _: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const res = await UserService.delete(params.id);

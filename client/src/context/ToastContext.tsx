@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 
+/* Contexto de las Toast notifications, debe ser externo al UserList para que las notificaciones no desaparezcan al navegar o recargar la lista  */
 interface ToastOptions {
   title?: string;
   description?: string;
