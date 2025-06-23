@@ -38,6 +38,9 @@ export default class UserService {
     if (filters.id) {
       params.set("id", filters.id);
     }
+    if (filters.status) {
+      params.set("estado", filters.status);
+    }
     return params;
   }
 

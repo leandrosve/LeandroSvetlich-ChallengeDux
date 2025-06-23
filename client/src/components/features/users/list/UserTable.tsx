@@ -68,7 +68,6 @@ function UserTable({ users, onSort, filter }: Props) {
       <Column
         field="estado"
         header="Estado"
-        sortable
         style={{ width: "25%" }}
         body={statusBodyTemplate}
       ></Column>

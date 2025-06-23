@@ -5,16 +5,19 @@ export function buildUserFilterUrl(filters: UserFilters): string {
   const params = new URLSearchParams(window.location.search);
   if (filters.searchTerm) params.set("search", filters.searchTerm);
   else params.delete("search");
+  if (filters.status)
+    params.set("status", filters.status.toLowerCase());
+  else params.delete("status");
   if (filters.page) params.set("page", filters.page.toString());
   else params.delete("page");
   if (filters.pageSize) params.set("size", filters.pageSize.toString());
   else params.delete("size");
-  if (filters.sort) params.set("sort", filters.sort.toString());
+  if (filters.sort) params.set("sort", filters.sort);
   else {
     params.delete("sort");
     params.delete("order");
   }
-  if (filters.order) params.set("order", filters.order.toString());
+  if (filters.order) params.set("order", filters.order);
   else params.delete("order");
 
   return `${ROUTES.users}?${params.toString()}`;
@@ -29,7 +32,14 @@ export function parseUserFiltersFromParams(
     typeof params.search === "string" ? params.search : undefined;
 
   const sort =
-    typeof params.sort === "string" ? (params.sort as keyof User) : 'id';
+    typeof params.sort === "string" ? (params.sort as keyof User) : "id";
+
+  let status = undefined;
+  if (typeof params.status === "string") {
+    if (["ACTIVO", "INACTIVO"].includes(params.status.toUpperCase())) {
+      status = params.status.toUpperCase();
+    }
+  }
 
   const order =
     params.order === "asc" || params.order === "desc"
@@ -42,5 +52,6 @@ export function parseUserFiltersFromParams(
     searchTerm,
     sort,
     order,
+    status,
   };
 }

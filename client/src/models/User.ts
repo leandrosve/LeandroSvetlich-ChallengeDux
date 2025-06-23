@@ -19,4 +19,5 @@ export interface UserFilters {
   sort?: keyof User;
   order?: "asc" | "desc";
   id?: string;
+  status?: string;
 }
