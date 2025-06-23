@@ -14,12 +14,12 @@ import { ToastProvider } from "@/context/ToastContext";
 import ToastNotification from "@/components/layout/ToastNotification";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "./static/fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "./static/fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
