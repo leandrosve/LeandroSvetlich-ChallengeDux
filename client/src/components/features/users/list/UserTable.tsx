@@ -58,6 +58,7 @@ function UserTable({ users, onSort, onDeleteUser, onEditUser, filter }: Props) {
           icon="pi pi-ellipsis-h"
           className="border-round"
           severity="secondary"
+          aria-label="Abrir menu contextual de acciones"
           text
           onClick={(event) => {
             setSelectedUser(user);
