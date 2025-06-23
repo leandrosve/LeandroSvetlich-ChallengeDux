@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
   const res = await UserService.create(newUser);
 
-  Logger.info(res);
+  Logger.info("[CREAR-USUARIO]", res);
   if (res.hasError) {
     return new Response(JSON.stringify(res), {
       status: 400,

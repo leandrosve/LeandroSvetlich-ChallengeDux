@@ -22,11 +22,11 @@ export async function PATCH(
     });
   }
 
-  const newUser: User = parsed.data;
+  const updatedUser: User = parsed.data;
 
-  const res = await UserService.update(params.id, newUser);
+  const res = await UserService.update(params.id, updatedUser);
 
-  Logger.info(newUser, res);
+  Logger.info("[EDIT-USER]", res);
   if (res.hasError) {
     return new Response(JSON.stringify(res), {
       status: 400,
