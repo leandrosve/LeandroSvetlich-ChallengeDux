@@ -33,3 +33,18 @@ export async function PATCH(
   revalidateTag(CACHE_TAGS.users);
   return new Response(JSON.stringify(res));
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const res = await UserService.delete(params.id);
+
+  if (res.hasError)
+    return new Response(JSON.stringify(res), {
+      status: 400,
+    });
+
+  revalidateTag(CACHE_TAGS.users);
+  return new Response(JSON.stringify(res));
+}

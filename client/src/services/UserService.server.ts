@@ -114,4 +114,22 @@ export default class UserService {
     const updatedUser: User = await res.json();
     return { hasError: false, data: updatedUser };
   }
+
+  public static async delete(id: string): Promise<APIResponse<boolean>> {
+    const res = await fetch(`${this.BASE_URL}${this.PATH}/${id}?sector=4000`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      return {
+        hasError: true,
+        error: "api_error",
+      };
+    }
+
+    return { hasError: false, data: true };
+  }
 }

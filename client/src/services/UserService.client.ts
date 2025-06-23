@@ -35,6 +35,21 @@ export async function updateUser(
   return { hasError: true, error: "unknown_error" };
 }
 
+export async function deleteUser(
+  userId: string
+): Promise<APIResponse<boolean>> {
+  const res = await fetch("/api/users/" + userId, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (res.ok) {
+    return (await res.json()) as APIResponse<boolean>;
+  }
+
+  return { hasError: true, error: "unknown_error" };
+}
+
 export async function isUserIdAvailable(
   id: string
 ): Promise<APIResponse<{ id: string; available: boolean }>> {
