@@ -71,3 +71,8 @@ npm run build
 npm start
 ```
 La aplicación debería estar disponible en: http://localhost:3000
+
+---
+
+## ⚡ Resultados del análisis con Lighthouse
+![Lighthouse Performance](https://i.postimg.cc/rFW9PqGL/imagen.png)
