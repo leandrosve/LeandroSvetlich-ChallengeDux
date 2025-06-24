@@ -30,6 +30,10 @@
 - Implementé el manejo de **filtros y modales** a través de **query params**, para permitir navegación directa, persistencia del estado y una experiencia coherente.
 - Escribí **tests unitarios** centrados en la lógica de filtros y el parsing de parámetros de URL.
 
+### Manejo de errores
+- Implementé un **Error Boundary** en combinación con `<Suspense>` para manejar errores inesperados y mostrar mensajes amigables sin comprometer el resto de la página.
+
+
 ### API & Server actions
 
 - Usé **Route Handlers** (`/api/users`) para manejar las operaciones `create`, `update` y `delete`.
