@@ -24,7 +24,7 @@ async function UsersDataLoader({ filters }: Props) {
       />
     );
   return (
-    <UserListProvider initialData={data}>
+    <UserListProvider initialData={data} initialFilters={filters}>
       <UserListComponent filters={filters} />
     </UserListProvider>
   );

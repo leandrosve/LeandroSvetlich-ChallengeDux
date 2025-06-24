@@ -70,3 +70,4 @@ npm run dev
 npm run build
 npm start
 ```
+La aplicación debería estar disponible en: http://localhost:3000

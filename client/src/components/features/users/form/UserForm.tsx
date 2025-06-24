@@ -6,11 +6,10 @@ import { Dropdown } from "primereact/dropdown";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useValidateUserId from "@/hooks/useValidateUserId";
+import useValidateUserId from "@/hooks/users/useValidateUserId";
 import User from "@/models/User";
 import Alert from "@/components/common/Alert";
-import { useUserList } from "@/context/UserListContext";
-import { createUser, updateUser } from "@/services/UserService.client";
+import useUserActions from "@/hooks/users/useUserActions";
 
 const statuses = [
   {
@@ -50,7 +49,7 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
     },
   });
 
-  const { actions } = useUserList();
+  const { onUpdateUser, onCreateUser } = useUserActions();
 
   const id = watch("id");
 
@@ -66,9 +65,9 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
       setError("");
       let res;
       if (mode == "create") {
-        res = await createUser(data);
+        res = await onCreateUser(data);
       } else if (mode == "edit" && user) {
-        res = await updateUser(user.id, data);
+        res = await onUpdateUser(user.id, data);
       } else return;
 
       if (res.hasError) {
@@ -76,13 +75,9 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
         return;
       }
 
-      if (mode == "edit" && user) {
-        actions.updateUser(user.id, res.data);
-      }
-
       onSuccess(mode);
     },
-    [mode, user, actions, onSuccess]
+    [mode, user, onSuccess, onCreateUser, onUpdateUser]
   );
 
   return (
@@ -151,6 +146,18 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
         <Button
           label="Confirmar"
           type="submit"
+          tooltip={
+            !isValid
+              ? "Completa los campos necesarios"
+              : !idAvailable
+              ? "Revisa los datos ingresados"
+              : undefined
+          }
+          tooltipOptions={{
+            showDelay: 0,
+            hideDelay: 300,
+            showOnDisabled: true,
+          }}
           loading={isSubmitting}
           disabled={!isValid || !idAvailable}
         />

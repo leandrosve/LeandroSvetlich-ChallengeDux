@@ -78,6 +78,11 @@ function UserTable({ users, onSort, onDeleteUser, onEditUser, filter }: Props) {
         message: "¿Estás seguro que deseas eliminar el usuario?",
         header: "Eliminar usuario",
         defaultFocus: "cancel",
+        acceptLabel: "Eliminar",
+        acceptClassName:"p-button-danger",
+        rejectLabel:"Cancelar",
+        rejectClassName: "p-button-secondary  p-button-text",
+        draggable: false,
         accept: () => onDeleteUser(user),
       });
     },
@@ -124,7 +129,7 @@ function UserTable({ users, onSort, onDeleteUser, onEditUser, filter }: Props) {
           field="id"
           header="Id"
           sortable
-          style={{ width: "15%", height:'4rem' }}
+          style={{ width: "15%", height: "4rem" }}
         ></Column>
         <Column
           field="usuario"
@@ -153,10 +158,12 @@ function UserTable({ users, onSort, onDeleteUser, onEditUser, filter }: Props) {
   );
 }
 
-export const UserTableSkeleton = () => (
-  <div className="gap-2 flex flex-column align-items-stretch w-full flex-grow-1 pb-2">
-    <Skeleton width="full" height="4rem" />
-    <Skeleton width="full" height="25rem" />
+export const UserTableSkeleton = ({ rows }: { rows: number }) => (
+  <div className="gap-1 flex flex-column align-items-stretch w-full flex-grow-1 pb-2">
+    <Skeleton width="full" height="4rem" className="mb-2"/>
+    {[...Array(rows)].map((_, i) => (
+      <Skeleton key={i} width="100%" height="3.75rem" />
+    ))}
     <div className="flex-grow-1"></div>
     <Skeleton
       width="40rem"

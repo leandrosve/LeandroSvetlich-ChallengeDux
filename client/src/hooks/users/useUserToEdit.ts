@@ -1,4 +1,4 @@
-import { useUserList } from "@/context/UserListContext";
+import { useUserListContext } from "@/context/UserListContext";
 import User from "@/models/User";
 import { getById } from "@/services/UserService.client";
 import { useCallback, useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
  * Intenta obtenerlo del contexto local, si no se encuentra llama a la API de Dux
  */
 export default function useUserToEdit(userId: string | null) {
-  const { data } = useUserList();
+  const { data } = useUserListContext();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(!!userId);
   const [error, setError] = useState("");

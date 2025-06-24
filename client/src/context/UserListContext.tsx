@@ -1,6 +1,7 @@
 "use client";
 
-import User from "@/models/User";
+import User, { UserFilters } from "@/models/User";
+import { DEFAULT_USER_FILTERS } from "@/utils/filters";
 import {
   createContext,
   useContext,
@@ -18,16 +19,21 @@ interface UserListData {
 
 interface UserListContextProps {
   data: UserListData;
+  filters: UserFilters;
   actions: {
-    updateUser: (id: string, user: User) => void;
+    update: (id: string, user: User) => void;
   };
 }
 interface UserListProviderProps {
   children: ReactNode;
   initialData?: UserListData;
+  initialFilters?: UserFilters;
 }
 
-const defaultData: UserListData = { users: [], total: 0 };
+const defaultData: UserListData = {
+  users: [],
+  total: 0,
+};
 
 const UserListContext = createContext<UserListContextProps | undefined>(
   undefined
@@ -36,10 +42,12 @@ const UserListContext = createContext<UserListContextProps | undefined>(
 export function UserListProvider({
   children,
   initialData = defaultData,
+  initialFilters = DEFAULT_USER_FILTERS,
 }: UserListProviderProps) {
   const [data, setData] = useState<UserListData>(initialData);
+  const [filters] = useState<UserFilters>(initialFilters);
 
-  const updateUser = useCallback(
+  const update = useCallback(
     (id: string, updatedUser: User) => {
       setData((prev) => ({
         ...prev,
@@ -50,17 +58,17 @@ export function UserListProvider({
   );
 
   const actions = {
-    updateUser,
+    update,
     setData,
   };
 
   return (
-    <UserListContext.Provider value={{ data, actions }}>
+    <UserListContext.Provider value={{ data, actions, filters }}>
       {children}
     </UserListContext.Provider>
   );
 }
-export const useUserList = (): UserListContextProps => {
+export const useUserListContext = (): UserListContextProps => {
   const context = useContext(UserListContext);
   if (!context) throw new Error("Debe usarse desde dentro del UserProvider");
   return context;

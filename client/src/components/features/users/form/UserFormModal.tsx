@@ -4,7 +4,7 @@ import { Dialog } from "primereact/dialog";
 import { useCallback, useEffect, useState } from "react";
 import UserForm from "./UserForm";
 import { ProgressSpinner } from "primereact/progressspinner";
-import useUserToEdit from "@/hooks/useUserToEdit";
+import useUserToEdit from "@/hooks/users/useUserToEdit";
 import Alert from "@/components/common/Alert";
 import { ROUTES } from "@/constants/routes";
 import { useToast } from "@/context/ToastContext";

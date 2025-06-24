@@ -24,7 +24,7 @@ export default async function UsersPage({
         <UserCreateButton />
       </div>
       <UserFiltersBar filters={filters} />
-      <Suspense key={key} fallback={<UserTableSkeleton />}>
+      <Suspense key={key} fallback={<UserTableSkeleton rows={filters.pageSize}/>}>
         <UsersDataLoader filters={filters} />
       </Suspense>
     </div>

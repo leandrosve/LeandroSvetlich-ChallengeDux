@@ -16,11 +16,6 @@ export default function UserSearchBar({ filters }: { filters: UserFilters }) {
 
   const ref = useRef<HTMLInputElement>(null);
   const [debouncedSearchTerm, setDebouncedTerm] = useDebounce(searchTerm, 500);
-  const currentSearchTerm = filters.searchTerm;
-
-  useEffect(() => {
-    setSearchTerm(filters.searchTerm ?? "");
-  }, [filters]);
 
   const updateURL = useCallback(
     (term: string) => {
@@ -30,17 +25,31 @@ export default function UserSearchBar({ filters }: { filters: UserFilters }) {
     [router, filters]
   );
 
+  // Uso este ref para que usarlo dentro del useEffect, sin que genere triggers indeseados
+  const updateURLRef = useRef(updateURL);
+  const currentSearchTermRef = useRef(filters.searchTerm);
+
+  useEffect(() => {
+    const term = filters.searchTerm ?? "";
+    currentSearchTermRef.current = term;
+    setSearchTerm(term);
+  }, [filters]);
+
   const clearInput = useCallback(() => {
     setSearchTerm("");
     setDebouncedTerm("");
     ref.current?.focus();
   }, [ref, setDebouncedTerm]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (currentSearchTerm == debouncedSearchTerm) return;
-    if (!currentSearchTerm && !debouncedSearchTerm) return;
-    updateURL(debouncedSearchTerm);
+    updateURLRef.current = updateURL;
+  }, [updateURL]);
+
+  useEffect(() => {
+    const term = currentSearchTermRef.current;
+    if (term == debouncedSearchTerm) return;
+    if (!term && !debouncedSearchTerm) return;
+    updateURLRef.current(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
   return (
