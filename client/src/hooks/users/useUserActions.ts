@@ -42,7 +42,7 @@ const useUserActions = () => {
     params.set("user", user.id);
     // Evito usar router para no generar un re-render de la pagina
     window.history.pushState(null, "", `?${params.toString()}`);
-  }, []);
+  }, [searchParams]);
 
   const onDeleteUser = useCallback(
     async (user: User) => {
