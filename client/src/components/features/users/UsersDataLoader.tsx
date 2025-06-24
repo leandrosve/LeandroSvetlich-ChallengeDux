@@ -1,7 +1,6 @@
 import UserService from "@/services/UserService.server";
 import React from "react";
 import UserListComponent from "./list/UserListComponent";
-import Alert from "@/components/common/Alert";
 import { UserListProvider } from "@/context/UserListContext";
 
 interface Props {
@@ -15,14 +14,9 @@ interface Props {
 /*** (Server Component) carga los usuarios e inicializa el contexto, para que en el primer render se muestre la lista correctamente */
 async function UsersDataLoader({ filters }: Props) {
   const { hasError, data } = await UserService.list(filters);
-  if (hasError)
-    return (
-      <Alert
-        title="Lo sentimos, se ha producido un error"
-        description="No pudimos obtener los usuarios"
-        severity="error"
-      />
-    );
+  // Arrojo una excepction, para evitar la posibilidad de cachear cuando hay errores
+  if (hasError) throw new Error("error_fetching_users");
+
   return (
     <UserListProvider initialData={data} initialFilters={filters}>
       <UserListComponent filters={filters} />

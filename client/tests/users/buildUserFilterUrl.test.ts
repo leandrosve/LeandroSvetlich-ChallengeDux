@@ -22,7 +22,6 @@ describe("buildUserFilterUrl", () => {
       order: "desc",
     };
     const url = buildUserFilterUrl(filters);
-    console.log({ url });
     expect(url).toBe("/usuarios?");
   });
 

@@ -1,10 +1,11 @@
 import { Message, MessageProps } from "primereact/message";
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface Props extends MessageProps {
   title?: string;
   description?: string;
   severity?: "success" | "info" | "error";
+  children?: ReactNode;
 }
 const getBorderColor = (severity?: Props["severity"]) => {
   switch (severity) {
@@ -37,6 +38,7 @@ const Alert = ({
   description,
   className,
   severity,
+  children,
   ...props
 }: Props) => {
   return (
@@ -48,26 +50,16 @@ const Alert = ({
       severity={severity}
       {...props}
       content={
-        <AlertContent
-          title={title}
-          description={description}
-          severity={severity}
-        />
+        <div className="flex py-3 gap-2 flex-1">
+          {severity && <span className={`${getIcon(severity)} text-xl`} />}
+          <div className="flex flex-column align-items-start flex-1">
+            {title && <div className="ml-2 font-bold">{title}</div>}
+            {description && <div className="ml-3 mt-2">{description}</div>}
+            {children}
+          </div>
+        </div>
       }
     />
-  );
-};
-
-const AlertContent = ({ title, description, severity }: Props) => {
-  return (
-    <div className="flex py-3 gap-2">
-       {severity && <span className={`${getIcon(severity)} text-xl`} />}
-      <div className="flex flex-column align-items-start">
-       
-        {title && <div className="ml-2 font-bold">{title}</div>}
-        {description && <div className="ml-3 mt-2">{description}</div>}
-      </div>
-    </div>
   );
 };
 

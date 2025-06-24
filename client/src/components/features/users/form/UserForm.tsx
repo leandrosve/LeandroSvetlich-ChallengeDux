@@ -138,6 +138,7 @@ const UserForm = ({ onCancel, mode = "create", onSuccess, user }: Props) => {
         <Button
           label="Cancelar"
           severity="secondary"
+          type="button"
           onClick={(e) => {
             e.preventDefault();
             onCancel();

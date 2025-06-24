@@ -8,6 +8,7 @@ import {
   useState,
   ReactNode,
   useCallback,
+  useEffect,
 } from "react";
 
 /* Contexto del listado de usuarios, utilizado principalmente para evitar prop drilling en el callback luego de modificar un usuario */
@@ -46,6 +47,10 @@ export function UserListProvider({
 }: UserListProviderProps) {
   const [data, setData] = useState<UserListData>(initialData);
   const [filters] = useState<UserFilters>(initialFilters);
+
+  useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
 
   const update = useCallback(
     (id: string, updatedUser: User) => {
