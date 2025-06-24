@@ -21,7 +21,12 @@ export default function useUserToEdit(userId: string | null) {
 
   // Si el usuario esta en el estado local, lo tomo de ahi, si no lo voy a buscar a la API
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      setLoading(false);
+      setError("");
+      setUser(null);
+      return;
+    }
 
     const fetch = async () => {
       setLoading(true);
